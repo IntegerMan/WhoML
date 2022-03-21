@@ -21,5 +21,6 @@ namespace MattEland.ML.Common
                 allowQuoting: allowQuoting,
                 trimWhitespace: trimWhitespace);
         }
+
     }
 }
