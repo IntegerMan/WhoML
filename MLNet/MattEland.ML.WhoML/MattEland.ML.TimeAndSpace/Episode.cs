@@ -48,7 +48,7 @@ public class Episode
     public string Music { get; set; }
 
     [LoadColumn(15)]
-    public DateTime Date { get; set; }
+    public string Date { get; set; } // Note: DateTime columns are not supported
 
     [LoadColumn(16)]
     public bool AiredFriday { get; set; }
