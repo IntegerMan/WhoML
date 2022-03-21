@@ -2,6 +2,7 @@
 
 public class Episode
 {
+    /*
     [LoadColumn(0)]
     public string EpisodeId { get; set; }
 
@@ -13,6 +14,7 @@ public class Episode
 
     [LoadColumn(3)]
     public string DoctorId { get; set; }
+    */
 
     [LoadColumn(4)]
     public bool IsSpecial { get; set; }
@@ -47,8 +49,10 @@ public class Episode
     [LoadColumn(14)]
     public string Music { get; set; }
 
+    /*
     [LoadColumn(15)]
     public string Date { get; set; } // Note: DateTime columns are not supported
+    */
 
     [LoadColumn(16)]
     public bool AiredFriday { get; set; }
@@ -71,8 +75,10 @@ public class Episode
     [LoadColumn(22)]
     public float Rating { get; set; }
 
+    /* Don't include both Rating and Views as they're too closely related
     [LoadColumn(23)]
     public float Views { get; set; }
+    */
 
     [LoadColumn(24)]
     public bool Has10 { get; set; }
