@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using MattEland.ML.Common;
 using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
-using Tensorflow.Contexts;
 
 namespace MattEland.ML.TimeAndSpace;
 
 public static class RegressionModelTrainer
 {
+    [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: Microsoft.ML.AutoML.StringParameterValue; size: 158MB")]
     public static PredictionEngine<Episode, RatingPrediction> TrainDoctorWhoRegressionPredictor(
         this MLContext context,
         DataOperationsCatalog.TrainTestData trainTest)
@@ -30,17 +26,15 @@ public static class RegressionModelTrainer
         // Train a model
         Console.WriteLine($"Training for {secondsToTrain} seconds...");
 
-        RegressionConsoleProgressHandler progressHandler = new();
         ExperimentResult<RegressionMetrics> result = experiment.Execute(
             trainData: trainTest.TrainSet,
             validationData: trainTest.TestSet,
             labelColumnName: nameof(Episode.Rating),
             preFeaturizer: null,
-            progressHandler: progressHandler);
+            progressHandler: new RegressionConsoleProgressHandler());
 
         // Evaluate Results
-        Console.WriteLine($"Best algorithm: {result.BestRun.TrainerName}");
-        Console.WriteLine();
+        Console.WriteLine($"Best algorithm: {result.BestRun.TrainerName}{Environment.NewLine}");
         result.BestRun.ValidationMetrics.LogMetricsString();
 
         // Build a Prediction Engine to predict new values
@@ -49,7 +43,6 @@ public static class RegressionModelTrainer
                 transformer: result.BestRun.Model,
                 inputSchema: trainTest.TestSet.Schema
             );
-
 
         return predictionEngine;
     }
