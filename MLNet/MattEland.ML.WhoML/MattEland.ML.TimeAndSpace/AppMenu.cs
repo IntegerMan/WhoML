@@ -44,7 +44,7 @@ internal class AppMenu
                     break;
 
                 case "2": // Binary Classification
-                    Console.WriteLine("Binary Classification is not implemented");
+                    _appTasks.PerformBinaryClassification();
                     break;
 
                 case "3": // Multi-Class Classification
