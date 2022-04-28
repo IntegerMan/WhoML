@@ -4,7 +4,7 @@ using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
 
-namespace MattEland.ML.TimeAndSpace;
+namespace MattEland.ML.TimeAndSpace.Core;
 
 public static class RegressionModelTrainer
 {

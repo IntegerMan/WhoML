@@ -1,20 +1,22 @@
 ﻿using Microsoft.ML.Data;
 
+namespace MattEland.ML.TimeAndSpace.Core;
+
 public class Episode
 {
     /*
-    [LoadColumn(0)]
-    public string EpisodeId { get; set; }
+[LoadColumn(0)]
+public string EpisodeId { get; set; }
 
-    [LoadColumn(1)]
-    public string Title { get; set; }
+[LoadColumn(1)]
+public string Title { get; set; }
 
-    [LoadColumn(2)]
-    public float Season { get; set; }
+[LoadColumn(2)]
+public float Season { get; set; }
 
-    [LoadColumn(3)]
-    public string DoctorId { get; set; }
-    */
+[LoadColumn(3)]
+public string DoctorId { get; set; }
+*/
 
     [LoadColumn(4)]
     public bool IsSpecial { get; set; }
@@ -50,9 +52,9 @@ public class Episode
     public string Music { get; set; }
 
     /*
-    [LoadColumn(15)]
-    public string Date { get; set; } // Note: DateTime columns are not supported
-    */
+[LoadColumn(15)]
+public string Date { get; set; } // Note: DateTime columns are not supported
+*/
 
     [LoadColumn(16)]
     public bool AiredFriday { get; set; }
@@ -76,9 +78,9 @@ public class Episode
     public float Rating { get; set; }
 
     /* Don't include both Rating and Views as they're too closely related
-    [LoadColumn(23)]
-    public float Views { get; set; }
-    */
+[LoadColumn(23)]
+public float Views { get; set; }
+*/
 
     [LoadColumn(24)]
     public bool Has10 { get; set; }

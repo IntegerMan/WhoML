@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace MattEland.ML.TimeAndSpace;
+namespace MattEland.ML.TimeAndSpace.Core;
 
 public class BinaryPrediction
 {

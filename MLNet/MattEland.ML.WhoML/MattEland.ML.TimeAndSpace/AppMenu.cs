@@ -1,4 +1,6 @@
-﻿namespace MattEland.ML.TimeAndSpace;
+﻿using MattEland.ML.TimeAndSpace.Core;
+
+namespace MattEland.ML.TimeAndSpace;
 
 internal class AppMenu
 {
