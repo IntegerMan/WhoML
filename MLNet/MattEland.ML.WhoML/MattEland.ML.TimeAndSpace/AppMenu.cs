@@ -5,6 +5,7 @@ namespace MattEland.ML.TimeAndSpace;
 internal class AppMenu
 {
     private const string DataFilePath = "WhoDataSet.csv";
+    private const uint SecondsToTrain = 2;
 
     private string GetMainMenuChoice()
     {
@@ -16,6 +17,8 @@ internal class AppMenu
         Console.WriteLine("3) Multi-Class Classification");
         Console.WriteLine("4) Recommendation");
         Console.WriteLine("5) Ranking");
+        Console.WriteLine("6) Calculate Best Episode");
+        Console.WriteLine("7) Calculate Worst Episode");
         Console.WriteLine("Q) Quit");
 
         Console.WriteLine();
@@ -26,7 +29,6 @@ internal class AppMenu
 
     public void RunMainMenu()
     {
-
         ShowWelcome();
 
         bool keepGoing = true;
@@ -38,13 +40,11 @@ internal class AppMenu
             switch (choice.ToUpperInvariant())
             {
                 case "1": // Regression
-                    DoctorWhoRegressionExperiment regressionExperiment = new();
-                    regressionExperiment.PerformRegression(DataFilePath);
+                    PerformRegressionExperiment();
                     break;
 
                 case "2": // Binary Classification
-                    DoctorWhoClassificationExperiment binaryExperiment = new();
-                    binaryExperiment.PerformBinaryClassification(DataFilePath);
+                    PerformBinaryClassificationExperiment();
                     break;
 
                 case "3": // Multi-Class Classification
@@ -59,6 +59,14 @@ internal class AppMenu
                     Console.WriteLine("Ranking is not implemented");
                     break;
 
+                case "6": // Calculate Best Episode
+                    Console.WriteLine("Calculating the Best Episode is not Possible Yet");
+                    break;
+
+                case "7": // Calculate Worst Episode
+                    Console.WriteLine("Calculating the Worst Episode is not Possible Yet");
+                    break;
+
                 case "Q":
                     Console.WriteLine("Thanks for using the application! Allons-y!");
                     keepGoing = false;
@@ -69,6 +77,35 @@ internal class AppMenu
                     break;
             }
         }
+    }
+
+    private static void PerformBinaryClassificationExperiment()
+    {
+        DoctorWhoClassificationExperiment experiment = new();
+        experiment.Train(DataFilePath, SecondsToTrain);
+
+        // Predict Values from a sample episode
+        Episode sampleEpisode = EpisodeBuilder.BuildSampleEpisode();
+
+        // Get a rating prediction
+        BinaryPrediction prediction = experiment.Predict(sampleEpisode);
+
+        Console.WriteLine(prediction.Value
+            ? $"This hypothetical episode WOULD take place on earth with a score of {prediction.Confidence}"
+            : $"This hypothetical episode would NOT take place on earth with a score of {prediction.Confidence}");
+    }
+
+    private static void PerformRegressionExperiment()
+    {
+        DoctorWhoRegressionExperiment experiment = new();
+        experiment.Train(DataFilePath, SecondsToTrain);
+
+        // Predict Values from a sample episode
+        Episode sampleEpisode = EpisodeBuilder.BuildSampleEpisode();
+
+        // Get a rating prediction
+        RatingPrediction prediction = experiment.Predict(sampleEpisode);
+        Console.WriteLine($"This hypothetical episode would rate a {prediction.Score}");
     }
 
     private void ShowWelcome()

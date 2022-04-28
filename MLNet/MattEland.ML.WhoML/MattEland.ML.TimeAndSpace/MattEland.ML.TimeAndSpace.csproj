@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GeneticSharp" Version="2.6.0" />
     <PackageReference Include="Microsoft.ML" Version="1.7.1" />
     <PackageReference Include="Microsoft.ML.AutoML" Version="0.19.1" />
   </ItemGroup>

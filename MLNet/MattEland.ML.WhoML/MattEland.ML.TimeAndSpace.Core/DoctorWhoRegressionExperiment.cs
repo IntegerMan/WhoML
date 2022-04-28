@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,9 @@ namespace MattEland.ML.TimeAndSpace.Core;
 
 public class DoctorWhoRegressionExperiment : DoctorWhoExperimentBase
 {
-    public void PerformRegression(string dataPath, uint secondsToTrain=30)
+    private PredictionEngine<Episode, RatingPrediction>? _predictionEngine;
+
+    public void Train(string dataPath, uint secondsToTrain=30)
     {
         // Load our source data and split it for training
         DataOperationsCatalog.TrainTestData trainTest = LoadTrainTestData(dataPath);
@@ -41,18 +44,32 @@ public class DoctorWhoRegressionExperiment : DoctorWhoExperimentBase
         Console.WriteLine($"Best algorithm: {result.BestRun.TrainerName}{Environment.NewLine}");
         result.BestRun.ValidationMetrics.LogMetricsString();
 
+        /* PFI Code does not currently work with AutoML
+        IDataView fullData = Context.Data.LoadCsv<Episode>(dataPath);
+        ImmutableDictionary<string, RegressionMetricsStatistics>? pfi =
+            Context
+                .Regression
+                .PermutationFeatureImportance(model: result.BestRun.Model, data: fullData, permutationCount: 3, labelColumnName: nameof(Episode.Rating));
+
+        foreach (KeyValuePair<string, RegressionMetricsStatistics> kvp in pfi)
+        {
+            Console.WriteLine(kvp.Key + ": " + kvp.Value.ToString());
+        }
+        */
+
         // Build a Prediction Engine to predict new values
-        PredictionEngine<Episode, RatingPrediction> predictionEngine =
+        _predictionEngine =
             Context.Model.CreatePredictionEngine<Episode, RatingPrediction>(
                 transformer: result.BestRun.Model,
                 inputSchema: trainTest.TestSet.Schema
             );
+    }
 
-        // Predict Values from a sample episode
-        Episode sampleEpisode = EpisodeBuilder.BuildSampleEpisode();
+    public RatingPrediction Predict(Episode sampleEpisode)
+    {
+        if (_predictionEngine == null)
+            throw new InvalidOperationException("Cannot make predictions when the model hasn't been trained");
 
-        // Get a rating prediction
-        RatingPrediction prediction = predictionEngine.Predict(sampleEpisode);
-        Console.WriteLine($"This hypothetical episode would rate a {prediction.Score}");
+        return _predictionEngine.Predict(sampleEpisode);
     }
 }

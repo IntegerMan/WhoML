@@ -1,4 +1,5 @@
-﻿using MattEland.ML.Common;
+﻿using System.Diagnostics;
+using MattEland.ML.Common;
 using Microsoft.ML;
 using Microsoft.ML.AutoML;
 using Microsoft.ML.Data;
@@ -7,7 +8,9 @@ namespace MattEland.ML.TimeAndSpace.Core;
 
 public class DoctorWhoClassificationExperiment : DoctorWhoExperimentBase
 {
-    public void PerformBinaryClassification(string dataPath, uint secondsToTrain = 30)
+    private PredictionEngine<Episode, BinaryPrediction>? _predictionEngine;
+
+    public void Train(string dataPath, uint secondsToTrain = 30)
     {
         // Load our source data and split it for training
         DataOperationsCatalog.TrainTestData trainTest = LoadTrainTestData(dataPath);
@@ -37,20 +40,18 @@ public class DoctorWhoClassificationExperiment : DoctorWhoExperimentBase
         //result.BestRun.ValidationMetrics.LogMetricsString();
 
         // Build a Prediction Engine to predict new values
-        PredictionEngine<Episode, BinaryPrediction> predictionEngine =
+        _predictionEngine =
             Context.Model.CreatePredictionEngine<Episode, BinaryPrediction>(
                 transformer: result.BestRun.Model,
                 inputSchema: trainTest.TestSet.Schema
             );
+    }
 
-        // Predict Values from a sample episode
-        Episode sampleEpisode = EpisodeBuilder.BuildSampleEpisode();
+    public BinaryPrediction Predict(Episode sampleEpisode)
+    {
+        if (_predictionEngine == null)
+            throw new InvalidOperationException("Cannot make predictions when the model hasn't been trained");
 
-        // Get a rating prediction
-        BinaryPrediction prediction = predictionEngine.Predict(sampleEpisode);
-
-        Console.WriteLine(prediction.Value
-            ? $"This hypothetical episode WOULD take place on earth with a score of {prediction.Confidence}"
-            : $"This hypothetical episode would NOT take place on earth with a score of {prediction.Confidence}");
+        return _predictionEngine.Predict(sampleEpisode);
     }
 }

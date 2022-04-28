@@ -1,4 +1,6 @@
-﻿namespace MattEland.ML.TimeAndSpace.Core;
+﻿using MattEland.ML.TimeAndSpace.Core;
+
+namespace MattEland.ML.TimeAndSpace;
 
 public static class EpisodeBuilder
 {
