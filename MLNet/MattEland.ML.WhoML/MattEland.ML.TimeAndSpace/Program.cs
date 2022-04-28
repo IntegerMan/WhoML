@@ -1,9 +1,5 @@
-﻿using MattEland.ML.Common;
-using MattEland.ML.TimeAndSpace;
-using MattEland.ML.TimeAndSpace.Core;
-using Microsoft.ML;
+﻿using MattEland.ML.TimeAndSpace;
 
-MachineLearningAppTasks ml = new MachineLearningAppTasks();
+AppMenu menu = new();
 
-AppMenu menu = new AppMenu(ml);
 menu.RunMainMenu();

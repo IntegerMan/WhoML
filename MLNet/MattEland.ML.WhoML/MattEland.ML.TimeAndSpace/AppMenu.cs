@@ -4,12 +4,7 @@ namespace MattEland.ML.TimeAndSpace;
 
 internal class AppMenu
 {
-    private readonly MachineLearningAppTasks _appTasks;
-
-    public AppMenu(MachineLearningAppTasks appTasks)
-    {
-        _appTasks = appTasks;
-    }
+    private const string DataFilePath = "WhoDataSet.csv";
 
     private string GetMainMenuChoice()
     {
@@ -31,6 +26,7 @@ internal class AppMenu
 
     public void RunMainMenu()
     {
+
         ShowWelcome();
 
         bool keepGoing = true;
@@ -42,11 +38,13 @@ internal class AppMenu
             switch (choice.ToUpperInvariant())
             {
                 case "1": // Regression
-                    _appTasks.PerformRegression();
+                    DoctorWhoRegressionExperiment regressionExperiment = new();
+                    regressionExperiment.PerformRegression(DataFilePath);
                     break;
 
                 case "2": // Binary Classification
-                    _appTasks.PerformBinaryClassification();
+                    DoctorWhoClassificationExperiment binaryExperiment = new();
+                    binaryExperiment.PerformBinaryClassification(DataFilePath);
                     break;
 
                 case "3": // Multi-Class Classification
