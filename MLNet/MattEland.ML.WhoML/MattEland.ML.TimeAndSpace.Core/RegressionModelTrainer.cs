@@ -9,7 +9,7 @@ namespace MattEland.ML.TimeAndSpace.Core;
 public static class RegressionModelTrainer
 {
     [SuppressMessage("ReSharper.DPA", "DPA0002: Excessive memory allocations in SOH", MessageId = "type: Microsoft.ML.AutoML.StringParameterValue; size: 158MB")]
-    public static PredictionEngine<Episode, RatingPrediction> TrainDoctorWhoRegressionPredictor(
+    public static PredictionEngine<Episode, RegressionPrediction> TrainDoctorWhoRegressionPredictor(
         this MLContext context,
         DataOperationsCatalog.TrainTestData trainTest)
     {
@@ -38,8 +38,8 @@ public static class RegressionModelTrainer
         result.BestRun.ValidationMetrics.LogMetricsString();
 
         // Build a Prediction Engine to predict new values
-        PredictionEngine<Episode, RatingPrediction> predictionEngine =
-            context.Model.CreatePredictionEngine<Episode, RatingPrediction>(
+        PredictionEngine<Episode, RegressionPrediction> predictionEngine =
+            context.Model.CreatePredictionEngine<Episode, RegressionPrediction>(
                 transformer: result.BestRun.Model,
                 inputSchema: trainTest.TestSet.Schema
             );

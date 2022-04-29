@@ -13,9 +13,9 @@ namespace MattEland.ML.TimeAndSpace.Core;
 
 public class DoctorWhoRegressionExperiment : DoctorWhoExperimentBase
 {
-    private PredictionEngine<Episode, RatingPrediction>? _predictionEngine;
+    private PredictionEngine<Episode, RegressionPrediction>? _predictionEngine;
 
-    public void Train(string dataPath, uint secondsToTrain=30)
+    public void Train(string dataPath, uint secondsToTrain=30, bool showDetailedProgress = false)
     {
         // Load our source data and split it for training
         DataOperationsCatalog.TrainTestData trainTest = LoadTrainTestData(dataPath);
@@ -32,15 +32,20 @@ public class DoctorWhoRegressionExperiment : DoctorWhoExperimentBase
 
         // Train a model
         Console.WriteLine($"Training for {secondsToTrain} seconds...");
+        Console.WriteLine();
 
         ExperimentResult<RegressionMetrics> result = experiment.Execute(
             trainData: trainTest.TrainSet,
             validationData: trainTest.TestSet,
             labelColumnName: nameof(Episode.Rating),
             preFeaturizer: null,
-            progressHandler: new RegressionConsoleProgressHandler());
+            progressHandler: new RegressionConsoleProgressHandler(showDetailedProgress: showDetailedProgress));
+
+        Console.WriteLine();
+        Console.WriteLine("Finished Training!");
 
         // Evaluate Results
+        Console.WriteLine();
         Console.WriteLine($"Best algorithm: {result.BestRun.TrainerName}{Environment.NewLine}");
         result.BestRun.ValidationMetrics.LogMetricsString();
 
@@ -59,13 +64,13 @@ public class DoctorWhoRegressionExperiment : DoctorWhoExperimentBase
 
         // Build a Prediction Engine to predict new values
         _predictionEngine =
-            Context.Model.CreatePredictionEngine<Episode, RatingPrediction>(
+            Context.Model.CreatePredictionEngine<Episode, RegressionPrediction>(
                 transformer: result.BestRun.Model,
                 inputSchema: trainTest.TestSet.Schema
             );
     }
 
-    public RatingPrediction Predict(Episode sampleEpisode)
+    public RegressionPrediction Predict(Episode sampleEpisode)
     {
         if (_predictionEngine == null)
             throw new InvalidOperationException("Cannot make predictions when the model hasn't been trained");

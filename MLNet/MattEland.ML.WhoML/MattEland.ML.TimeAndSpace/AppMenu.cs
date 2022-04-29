@@ -4,6 +4,7 @@ namespace MattEland.ML.TimeAndSpace;
 
 internal class AppMenu
 {
+    private DoctorWhoRegressionExperiment? _regressionExperiment;
     private const string DataFilePath = "WhoDataSet.csv";
     private const uint SecondsToTrain = 2;
 
@@ -60,11 +61,13 @@ internal class AppMenu
                     break;
 
                 case "6": // Calculate Best Episode
-                    Console.WriteLine("Calculating the Best Episode is not Possible Yet");
+                    Console.WriteLine("Calculating BEST episode given current regression model");
+                    PerformEpisodeGeneration(higherRatingIsBetter: true);
                     break;
 
                 case "7": // Calculate Worst Episode
-                    Console.WriteLine("Calculating the Worst Episode is not Possible Yet");
+                    Console.WriteLine("Calculating WORST episode given current regression model");
+                    PerformEpisodeGeneration(higherRatingIsBetter: false);
                     break;
 
                 case "Q":
@@ -95,17 +98,33 @@ internal class AppMenu
             : $"This hypothetical episode would NOT take place on earth with a score of {prediction.Confidence}");
     }
 
-    private static void PerformRegressionExperiment()
+    private void PerformRegressionExperiment()
     {
-        DoctorWhoRegressionExperiment experiment = new();
-        experiment.Train(DataFilePath, SecondsToTrain);
+        _regressionExperiment = new();
+        _regressionExperiment.Train(DataFilePath, SecondsToTrain);
 
         // Predict Values from a sample episode
         Episode sampleEpisode = EpisodeBuilder.BuildSampleEpisode();
 
         // Get a rating prediction
-        RatingPrediction prediction = experiment.Predict(sampleEpisode);
+        RegressionPrediction prediction = _regressionExperiment.Predict(sampleEpisode);
         Console.WriteLine($"This hypothetical episode would rate a {prediction.Score}");
+    }
+
+    private void PerformEpisodeGeneration(bool higherRatingIsBetter)
+    {
+        if (_regressionExperiment == null)
+        {
+            Console.WriteLine("Train a Regression Run First");
+            return;
+        }
+
+        GeneticEpisodeSolver solver = new GeneticEpisodeSolver();
+        Episode episode = solver.Optimize(_regressionExperiment, higherRatingIsBetter);
+
+        Console.WriteLine("The optimized episode involves...");
+        Console.WriteLine();
+        Console.WriteLine(episode);
     }
 
     private void ShowWelcome()
