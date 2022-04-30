@@ -55,6 +55,8 @@ public static class EpisodeBuilder
         };
 
         _builder = new Faker<TitledEpisode>()
+            .RuleForType(typeof(bool), f => f.Random.Bool())
+            .RuleFor(e => e.DayAired, f => f.Date.Weekday())
             .RuleFor(e => e.Title, f => f.Commerce.ProductName())
             .RuleFor(e => e.Music, f => f.Random.ArrayElement(musicians))
             .RuleFor(e => e.Writer, f => f.Random.ArrayElement(writers))
@@ -67,7 +69,7 @@ public static class EpisodeBuilder
     public static Episode BuildSampleEpisode() =>
         new()
         {
-            AiredFriday = true,
+            DayAired = "Friday",
             Has11 = true,
             HasTheMaster = true,
             HasAmy = true,

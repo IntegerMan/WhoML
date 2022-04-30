@@ -4,20 +4,6 @@ namespace MattEland.ML.TimeAndSpace.Core;
 
 public class Episode
 {
-    /*
-[LoadColumn(0)]
-public string EpisodeId { get; set; }
-
-[LoadColumn(1)]
-public string Title { get; set; }
-
-[LoadColumn(2)]
-public float Season { get; set; }
-
-[LoadColumn(3)]
-public string DoctorId { get; set; }
-*/
-
     [LoadColumn(4)]
     public bool IsSpecial { get; set; }
 
@@ -51,36 +37,8 @@ public string DoctorId { get; set; }
     [LoadColumn(14)]
     public string Music { get; set; }
 
-    /*
-[LoadColumn(15)]
-public string Date { get; set; } // Note: DateTime columns are not supported
-*/
-
-    [LoadColumn(16)]
-    public bool AiredFriday { get; set; }
-
-    [LoadColumn(17)]
-    public bool AiredMonday { get; set; }
-
-    [LoadColumn(18)]
-    public bool AiredSaturday { get; set; }
-
-    [LoadColumn(19)]
-    public bool AiredSunday { get; set; }
-
-    [LoadColumn(20)]
-    public bool AiredTuesday { get; set; }
-
-    [LoadColumn(21)]
-    public bool AiredWednesday { get; set; }
-
     [LoadColumn(22)]
     public float Rating { get; set; }
-
-    /* Don't include both Rating and Views as they're too closely related
-[LoadColumn(23)]
-public float Views { get; set; }
-*/
 
     [LoadColumn(24)]
     public bool Has10 { get; set; }
@@ -198,5 +156,8 @@ public float Views { get; set; }
 
     [LoadColumn(62)]
     public bool HasZygon { get; set; }
+
+    [LoadColumn(63)]
+    public string DayAired { get; set; }
 
 }

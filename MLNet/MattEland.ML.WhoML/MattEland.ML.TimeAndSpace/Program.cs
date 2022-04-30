@@ -3,17 +3,17 @@ using MattEland.ML.TimeAndSpace.Core;
 using Newtonsoft.Json;
 
 // Train a regression model to predict episode scores based on historic episodes
-const uint secondsToTrain = 10;
+uint secondsToTrain = InputHelper.GetUnsignedInteger("How many seconds do you want to train? (10 - 30 recommended)", minValue: 1);
 DoctorWhoRegressionExperiment experiment = new();
 experiment.Train(dataPath: "WhoDataSet.csv", secondsToTrain: secondsToTrain);
 
 // Generate a bunch of episodes, keeping only a season's worth of the best options
-const int episodesToGenerate = 1000;
-const int episodesToKeep = 12;
-Console.WriteLine("Generating a season of " + episodesToKeep + " episodes from " + episodesToGenerate + " candidates");
+uint episodesToKeep = InputHelper.GetUnsignedInteger("How many episodes are in your season? (At least 1)", minValue: 1);
+uint episodesToGenerate = InputHelper.GetUnsignedInteger($"How many episodes do you want to generate? (At least {episodesToKeep})", minValue: episodesToKeep);
+Console.WriteLine($"Generating a season of {episodesToKeep} episodes from {episodesToGenerate} candidates");
 
-List<TitledEpisode> episodes = new List<TitledEpisode>(episodesToKeep + 1); // Adding + 1 here because it will temporarily have one more before we prune it
-
+List<TitledEpisode> bestEpisodes = new();
+List<TitledEpisode> worstEpisodes = new();
 for (int i = 0; i < episodesToGenerate; i++)
 {
     // Build a random episode
@@ -24,28 +24,40 @@ for (int i = 0; i < episodesToGenerate; i++)
     ep.Rating = prediction.Score;
 
     // If this is one of the best episodes that we have, or the list isn't full yet, add it to the season
-    if (episodes.Count < episodesToKeep)
+    if (bestEpisodes.Count < episodesToKeep)
     {
-        episodes.Add(ep);
+        bestEpisodes.Add(ep);
     } 
-    else if (ep.Rating > episodes.Min(e => e.Rating))
+    else if (ep.Rating > bestEpisodes.Min(e => e.Rating))
     {
-        episodes.Add(ep);
-        episodes = episodes.OrderByDescending(e => e.Rating).Take(episodesToKeep).ToList();
+        bestEpisodes.Add(ep);
+        bestEpisodes = bestEpisodes.OrderByDescending(e => e.Rating).Take((int)episodesToKeep).ToList();
+    }
+
+    // If this is one of the worst episodes that we have, or the list isn't full yet, add it to the season
+    if (worstEpisodes.Count < episodesToKeep)
+    {
+        worstEpisodes.Add(ep);
+    } 
+    else if (ep.Rating < worstEpisodes.Max(e => e.Rating))
+    {
+        worstEpisodes.Add(ep);
+        worstEpisodes = worstEpisodes.OrderBy(e => e.Rating).Take((int)episodesToKeep).ToList();
     }
 }
 
 // Display the best episodes
 Console.WriteLine("The best episode involves...");
 
-TitledEpisode bestEpisode = episodes.OrderByDescending(e => e.Rating).First();
+TitledEpisode bestEpisode = bestEpisodes.OrderByDescending(e => e.Rating).First();
 Console.WriteLine(JsonConvert.SerializeObject(bestEpisode, Formatting.Indented));
 
 // Serialize the full season to disk
-File.WriteAllText("season.json", JsonConvert.SerializeObject(episodes, Formatting.Indented));
+File.WriteAllText("best_season.json", JsonConvert.SerializeObject(bestEpisodes, Formatting.Indented));
+File.WriteAllText("worst_season.json", JsonConvert.SerializeObject(worstEpisodes, Formatting.Indented));
 Console.WriteLine();
 Console.WriteLine("Saved full season to season.json for inspection");
 
 // Closing
 Console.WriteLine();
-Console.WriteLine("And that's all we have! Allons-y!");
+Console.WriteLine($"Have fun watching {bestEpisode.Title}! Allons-y!" );
